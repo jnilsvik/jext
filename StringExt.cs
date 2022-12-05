@@ -4,9 +4,8 @@ namespace jext;
 
 public static class StringExt
 {
-    #region wordLength
-
     
+    #region wordLength
 
     public static string ShorthenParagraphLength(this string s, int maxLength)
     {
