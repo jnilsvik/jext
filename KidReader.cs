@@ -7,11 +7,9 @@ public static class KidReader
     // kid nr is validated by the last nr 
     public static bool ValidateKidMod11(string kid)
     {
-        if (ValidateKidFormat(kid)) return false;
-
         var weights = new[] { 2,3,4,5,6,7 }.GetEnumerator();
         int sum = 0;
-        foreach (var nr in kid.Reverse().Skip(1))
+        foreach (char nr in kid.Reverse().Skip(1))
         {
             if (!weights.MoveNext())
             {
@@ -29,8 +27,6 @@ public static class KidReader
 
     public static bool ValidateKidMod10(string kid)
     {
-        if (ValidateKidFormat(kid)) return false;
-        
         int mul = 2;
         int sum = 0;
         foreach (char nr in kid.Reverse().Skip(1))
@@ -43,10 +39,15 @@ public static class KidReader
         }
 
         int remainder = sum % 10;
-        int controllDidgit = kid[^1];
+        int controllDidgit = int.Parse(kid[^1].ToString());
 
         return controllDidgit == (remainder == 0 ? 0 : 10 - remainder);
     }
 
     private static bool ValidateKidFormat(string kid) => kid.Length is < 2 or > 25 || Regex.Match(kid, @"\w").Success;
+
+    private static string[] GetKidCandidates(string txt) =>
+        Regex.Matches(txt, @"(?<=kid(.|\n){0,30} )(?<![.,\w]|\d[  ])\d{2,25}(?![.,\w ]\d)")
+            .Select(k => k.Value).Where(k => long.Parse(k) > 0)
+            .OrderByDescending(k => k.Length).ToArray();
 }
